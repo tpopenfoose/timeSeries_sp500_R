@@ -201,7 +201,7 @@ autoplot.forecast <- function(forecast, ..., holdout=NaN){
 
 
 
-forSp500 <- autoplot(forecast(fit, h = 24), holdout = act_sp500_2015_ts) +
+forSp500 <- autoplot(forecast(fit, h = 12), holdout = act_sp500_2015_ts) +
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y   = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
@@ -214,7 +214,7 @@ lambda <- BoxCox.lambda(sp500_TR)
 fit_sp500_BC <- ar(BoxCox(sp500_TR,lambda))
 for_sp500_BC <- forecast(fit_sp500_BC,h=12,lambda=lambda)
 
-s <- autoplot(forecast(fit_sp500_BC,h=24,lambda=lambda), holdout = act_sp500_2015_ts) + 
+s <- autoplot(forecast(fit_sp500_BC,h = 12,lambda=lambda), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
@@ -222,7 +222,7 @@ s <- autoplot(forecast(fit_sp500_BC,h=24,lambda=lambda), holdout = act_sp500_201
        title = "Box Cox Transformation Forecast Plot of S&P 500")
 s
 
-e <- autoplot(forecast(meanf(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
+e <- autoplot(forecast(meanf(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
@@ -230,7 +230,7 @@ e <- autoplot(forecast(meanf(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) +
        title = "Mean Forecast Plot of S&P 500")
 e
 
-f <- autoplot(forecast(naive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
+f <- autoplot(forecast(naive(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
@@ -238,7 +238,7 @@ f <- autoplot(forecast(naive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) +
        title = "Naive Forecast Plot of S&P 500") 
 f
 
-g <- autoplot(forecast(snaive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
+g <- autoplot(forecast(snaive(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
@@ -246,7 +246,7 @@ g <- autoplot(forecast(snaive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) +
        title = "Seasonal Naive Forecast Plot of S&P 500") 
 g
 
-h <- autoplot(forecast(ets(sp500_TR), h = 24), holdout=act_sp500_2015_ts) + 
+h <- autoplot(forecast(ets(sp500_TR), h = 12), holdout=act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 

@@ -27,7 +27,7 @@ attach(dataMaster)
 
 # EXPLORATORY ANALYSIS
 sp_500 <- ts(dataMaster$sp_500, start=c(1995, 1), freq=12)
-
+sp_500
 # TIME SERIES PLOT OF S&P
 tsSp <- autoplot(sp_500, 
                  main = "Plot of S & P 500 Time Series(1995-2015)", 
@@ -168,12 +168,12 @@ act_sp500_2015_ts
 
 autoplot.forecast <- function(forecast, ..., holdout=NaN){
   # data wrangling
-  time <- attr(forecast$x, "tsp")
-  time <- seq(time[1], attr(forecast$mean, "tsp")[2], by=1/time[3])
+  timeSet <- attr(forecast$x, "tsp")
+  timeSet <- seq(timeSet[1], attr(forecast$mean, "tsp")[2], by=1/timeSet[3])
   lenx <- length(forecast$x)
   lenmn <- length(forecast$mean)
   
-  df <- data.frame(time=time,
+  df <- data.frame(timeSet=timeSet,
                    x=c(forecast$x, forecast$mean),
                    x2=c(forecast$x, rep(NA, lenmn-length(holdout)), holdout),
                    forecast=c(rep(NA, lenx), forecast$mean),
@@ -184,15 +184,16 @@ autoplot.forecast <- function(forecast, ..., holdout=NaN){
                    holdout=c(rep(NA, lenx+lenmn-length(holdout)), holdout)
   )
   
-  ggplot(df, aes(time, x)) +
+  ggplot(df, aes(timeSet, x)) +
     geom_ribbon(aes(ymin=low2, ymax=upp2), fill="yellow", na.rm=TRUE) +
     geom_ribbon(aes(ymin=low1, ymax=upp1), fill="orange", na.rm=TRUE) +
-    geom_line(data=df, aes(time, x2), color="red")+
+    geom_line(data=df, aes(timeSet, x2), color="red")+
     geom_line(colour = "turquoise4", size = 1) +
-    geom_line(data=df[!is.na(df$forecast), ], aes(time, forecast), color="blue", na.rm=TRUE) +
-    geom_line(data=df[!is.na(df$holdout), ], aes(time, holdout), color="red", na.rm=TRUE) +
-    scale_x_continuous("") +
-    scale_y_continuous("") 
+    geom_line(data=df[!is.na(df$forecast), ], aes(timeSet, forecast), color="blue", na.rm=TRUE) +
+    geom_line(data=df[!is.na(df$holdout), ], aes(timeSet, holdout), color="red", na.rm=TRUE) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+    scale_y_continuous("") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
 
@@ -200,65 +201,58 @@ autoplot.forecast <- function(forecast, ..., holdout=NaN){
 
 
 
-forSp500 <- autoplot(forecast(fit, h = 12), holdout = act_sp500_2015_ts) +
+forSp500 <- autoplot(forecast(fit, h = 24), holdout = act_sp500_2015_ts) +
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y   = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values") +
   labs(title = "Plot of 2015 Forecast for S&P 500") 
 forSp500
-ggplotly(forSp500)
 
 # OTHER TRANSFORMATIONS
 lambda <- BoxCox.lambda(sp500_TR)
 fit_sp500_BC <- ar(BoxCox(sp500_TR,lambda))
 for_sp500_BC <- forecast(fit_sp500_BC,h=12,lambda=lambda)
 
-s <- autoplot(forecast(fit_sp500_BC,h=12,lambda=lambda), holdout = act_sp500_2015_ts) + 
+s <- autoplot(forecast(fit_sp500_BC,h=24,lambda=lambda), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values", 
        title = "Box Cox Transformation Forecast Plot of S&P 500")
 s
-ggplotly(s)
 
-e <- autoplot(forecast(meanf(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
+e <- autoplot(forecast(meanf(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values", 
        title = "Mean Forecast Plot of S&P 500")
 e
-ggplotly(e)
 
-f <- autoplot(forecast(naive(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
+f <- autoplot(forecast(naive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values", 
        title = "Naive Forecast Plot of S&P 500") 
 f
-ggplotly(f)
 
-g <- autoplot(forecast(snaive(sp500_TR, h = 12)), holdout = act_sp500_2015_ts) + 
+g <- autoplot(forecast(snaive(sp500_TR, h = 24)), holdout = act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values", 
        title = "Seasonal Naive Forecast Plot of S&P 500") 
 g
-ggplotly(g)  
 
-h <- autoplot(forecast(ets(sp500_TR), h = 12), holdout=act_sp500_2015_ts) + 
+h <- autoplot(forecast(ets(sp500_TR), h = 24), holdout=act_sp500_2015_ts) + 
   theme(panel.background = element_rect(fill = "gray98"),
         axis.line.y = element_line(colour="gray"),
         axis.line.x = element_line(colour="gray")) + 
   labs(x = "Year", y = "Closing Values", 
        title = "Exponential Smoothing Forecast Plot of S&P 500") 
 h
-ggplotly(h)  
-
 
 accuracy(forecast(fit, h=12))
 accuracy(forecast(fit_sp500_BC, h = 12))
@@ -295,5 +289,3 @@ j <- autoplot(pacf(squared.resARIMA, plot = FALSE),
 grid.arrange(i, j)
 # The acf plot shows one significant lag, as does the pacf, but that isn't enough to suggest we need GARCH modeling
 gfit <- garch(fit$residuals, order = c(1,1), trace = TRUE)
-
-
